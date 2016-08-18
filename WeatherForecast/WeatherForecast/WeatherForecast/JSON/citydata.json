@@ -1,0 +1,24 @@
+﻿[
+  {
+    "stateName": "Alabama",
+    "shortStateName": "Ala.",
+    "stateCode": "AL",
+    "city": "Montgomery",
+    "zip": 36101
+  },
+  {
+    "stateName": "Alaska",
+    "shortStateName": "Alaska.",
+    "stateCode": "AK",
+    "city": "Juneau",
+    "zip": 99801
+  },
+  {
+    "stateName": "Illinois",
+    "shortStateName": "Ill",
+    "stateCode": "IL",
+    "city": "Banan",
+    "zip": 36101
+  }
+
+]
