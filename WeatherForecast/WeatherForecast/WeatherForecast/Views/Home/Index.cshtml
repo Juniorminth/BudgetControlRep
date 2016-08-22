@@ -1,0 +1,108 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html ng-app="myApp">
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+    <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.8/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.8/angular-route.min.js"></script>   
+    <script src="~/Scripts/app.js"></script>
+    <script>
+        $(function () {
+            function log(message) {
+                $("<div>").text(message).prependTo("#log");
+                $("#log").scrollTop(0);
+            }
+
+            $("#city").autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        async: false,
+                        url: '/Home/GetCity',
+                        data: {
+                            shortCut: request.term
+                        },
+                        success: function (data) {
+                            debugger;
+                            if (data && data.length > 0) {
+                                var jsoBj = JSON.parse(data);
+                                response($.map(jsoBj, function (item) {
+                                    return {
+                                        label: item.city,
+                                        value: item.zip
+                                    };
+                                }));
+                            }
+
+                        }
+                    });
+                },
+                minLength: 2,
+                select: function (event, ui) {
+                    log(ui.item ?
+                      "Selected: " + ui.item.label :
+                      "Nothing selected, input was " + this.value);
+                    $.ajax({
+                        async: false,
+                        url: '/Home/GetCityWeather',
+                        data: { zip: ui.item.value },
+
+                        success: function (data) {
+                            debugger;
+                            var resp = JSON.parse(data);
+                            if (resp) {
+                                for(var i in resp){
+                                    log(i+":"+resp[i]);
+                                }
+                            }
+                            return data;
+                        },
+                        error: function (e, r, o) {
+                            console.log(e);
+                            console.log(r);
+                            console.log(o);
+                            return e;
+                        }
+                    });
+                },
+                open: function () {
+                    $(this).removeClass("ui-corner-all").addClass("ui-corner-top");
+                },
+                close: function () {
+                    $(this).removeClass("ui-corner-top").addClass("ui-corner-all");
+                }
+            });
+        });
+    </script>
+    @System.Web.Optimization.Scripts.Render("~/bundles/Angular")
+</head>
+<body ng-app="myApp">
+    <div ng-controller="CityController as ctrl">
+        <input auto-Complete ui-items="ctrl.Cities" ng-model="ctrl.Cities" />
+        selected = {{selected}}
+    </div>
+    <div style="display:none;">
+        <div class="ui-widget">
+            <label for="city">Your city: </label>
+            <input id="city">
+        </div>
+
+        <div class="ui-widget" style="margin-top:2em; font-family:Arial">
+            Result:
+            <div id="log" style="height: 200px; width: 300px; overflow: auto;" class="ui-widget-content"></div>
+        </div>
+    </div>
+
+    <script src="~/Scripts/Factories/CityFactory.js"></script>
+    <script src="~/Scripts/Directives/CityDirective.js"></script>
+    <script src="~/Scripts/Controllers/CityController.js"></script>
+    
+</body>
+</html>
